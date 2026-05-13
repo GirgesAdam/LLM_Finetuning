@@ -276,14 +276,6 @@ The large model files and checkpoint folders should be stored outside the GitHub
 
 ---
 
-## License
-
-The current license is marked as `other`.
-
-Before publishing publicly, make sure the dataset and LoRA adapter weights are allowed to be shared.
-
----
-
 ## Acknowledgements
 
 This project uses:
