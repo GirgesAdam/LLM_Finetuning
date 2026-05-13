@@ -14,16 +14,6 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# Full datasets
-*.jsonl
-data/raw/
-data/processed/
-datasets/
-llamafactory-finetune-data/
-
-# Allow the public sample dataset in root
-!news-sample.jsonl
-
 # Model outputs
 models/
 checkpoints/
