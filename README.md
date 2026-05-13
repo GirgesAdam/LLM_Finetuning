@@ -30,11 +30,11 @@ model-index:
 
 # Arabic News Qwen2.5 LoRA Fine-Tune
 
-This repository contains a LoRA adapter fine-tuned from [`Qwen/Qwen2.5-1.5B-Instruct`](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) for structured Arabic news processing.
+This repository contains a Google Colab project for fine-tuning a LoRA adapter from [`Qwen/Qwen2.5-1.5B-Instruct`](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) for structured Arabic news processing.
 
 The model was fine-tuned to follow instructions related to Arabic news articles, including structured information extraction and multilingual news translation tasks.
 
-This is a **PEFT/LoRA adapter**, not a full standalone model. To use it, load the base model first, then apply this adapter.
+This is a **PEFT/LoRA adapter**, not a full standalone model. To use the trained adapter, load the base model first, then apply the adapter.
 
 ---
 
@@ -43,6 +43,7 @@ This is a **PEFT/LoRA adapter**, not a full standalone model. To use it, load th
 - **Base model:** `Qwen/Qwen2.5-1.5B-Instruct`
 - **Fine-tuning method:** LoRA / PEFT
 - **Training framework:** LLaMA-Factory
+- **Notebook environment:** Google Colab
 - **Task type:** Supervised fine-tuning
 - **Primary language:** Arabic
 - **Output style:** Structured JSON-like responses
@@ -94,17 +95,17 @@ The dataset follows an instruction-tuning format with fields similar to:
 
 The full training dataset is not included in this repository because of size and licensing considerations.
 
-A small sample dataset may be provided in:
+A small sample dataset is provided in:
 
 ```text
-data/sample/
+news-sample.jsonl
 ```
 
 ---
 
 ## Training Procedure
 
-The model was trained using LLaMA-Factory with PEFT LoRA fine-tuning.
+The model was trained using LLaMA-Factory with PEFT LoRA fine-tuning inside Google Colab.
 
 ### Training Hyperparameters
 
@@ -199,6 +200,42 @@ Best logged validation loss:
 
 ---
 
+## Running the Notebook
+
+This project was developed in Google Colab.
+
+To run the project:
+
+1. Open `llm_finetuning.ipynb` in Google Colab.
+2. Use a GPU runtime.
+3. Install the required dependencies from the notebook or from `requirements.txt`.
+4. Mount Google Drive if you want to use your own dataset or save model outputs.
+5. Run the notebook cells in order to prepare the dataset, fine-tune the model, and test inference.
+
+The notebook may require a GPU runtime for training.
+
+---
+
+## Repository Files
+
+This repository contains the main files for the Arabic news fine-tuning project:
+
+```text
+README.md                 # Project documentation
+requirements.txt          # Python dependencies
+.gitignore                # Files ignored by Git
+llm_finetuning.ipynb      # Google Colab notebook for data preparation, fine-tuning, and inference
+news-sample.jsonl         # Small sample of the dataset
+
+results/                  # Training and evaluation outputs
+```
+
+The `results/` folder contains the training metrics, evaluation metrics, logs, and loss plots generated after fine-tuning.
+
+Large files such as the full dataset, model checkpoints, and LoRA adapter weights are not stored directly in this repository.
+
+---
+
 ## Output Files
 
 After training, the project produces files such as:
@@ -214,6 +251,19 @@ training_loss.png              # Training loss chart
 training_eval_loss.png         # Evaluation loss chart
 ```
 
+The large model files and checkpoint folders should be stored outside the GitHub repository, for example in Google Drive or Hugging Face Hub.
+
+---
+
+## Limitations
+
+- The model may hallucinate people, places, dates, topics, or summaries.
+- The model may sometimes produce invalid JSON.
+- The model was evaluated mainly using validation loss, not a full benchmark.
+- The training dataset is private/internal and may not cover all Arabic news domains.
+- The model may inherit limitations and biases from the base model and the training data.
+- Human review is recommended before using outputs in real applications.
+
 ---
 
 ## Framework Versions
@@ -223,6 +273,14 @@ training_eval_loss.png         # Evaluation loss chart
 - PyTorch `2.5.1+cu124`
 - Datasets `3.2.0`
 - Tokenizers `0.21.0`
+
+---
+
+## License
+
+The current license is marked as `other`.
+
+Before publishing publicly, make sure the dataset and LoRA adapter weights are allowed to be shared.
 
 ---
 
