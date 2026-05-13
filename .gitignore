@@ -21,9 +21,8 @@ data/processed/
 datasets/
 llamafactory-finetune-data/
 
-# Allow small sample data
-!data/sample/
-!data/sample/*.jsonl
+# Allow the public sample dataset in root
+!news-sample.jsonl
 
 # Model outputs
 models/
