@@ -282,7 +282,7 @@ with your real Hugging Face model repository name.
 Example:
 
 ```python
-adapter_id = "hassan-s272/arabic-news-qwen-lora"
+adapter_id = "Girges/arabic-news-qwen-lora"
 ```
 
 ---
@@ -387,14 +387,6 @@ For production use, schema validation with Pydantic or another validation librar
 - PyTorch `2.5.1+cu124`
 - Datasets `3.2.0`
 - Tokenizers `0.21.0`
-
----
-
-## License
-
-The current license is marked as `other`.
-
-Before publishing publicly, make sure the dataset and LoRA adapter weights are allowed to be shared.
 
 ---
 
