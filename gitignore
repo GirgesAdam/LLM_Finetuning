@@ -1,0 +1,42 @@
+# Secrets
+.env
+*.key
+secrets.*
+credentials.*
+token.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Full datasets
+*.jsonl
+data/raw/
+data/processed/
+datasets/
+llamafactory-finetune-data/
+
+# Allow small sample data
+!data/sample/
+!data/sample/*.jsonl
+
+# Model outputs
+models/
+checkpoints/
+checkpoint-*/
+outputs/
+adapter_model.safetensors
+*.safetensors
+training_args.bin
+
+# Logs
+wandb/
+runs/
+*.log
+vllm_tokens.txt
+locust_results.html
