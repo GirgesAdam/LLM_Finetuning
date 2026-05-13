@@ -36,6 +36,8 @@ The model was fine-tuned to follow instructions related to Arabic news articles,
 
 This is a **PEFT/LoRA adapter**, not a full standalone model. To use it, load the base model first, then apply this adapter.
 
+---
+
 ## Model Details
 
 - **Base model:** `Qwen/Qwen2.5-1.5B-Instruct`
@@ -45,6 +47,8 @@ This is a **PEFT/LoRA adapter**, not a full standalone model. To use it, load th
 - **Primary language:** Arabic
 - **Output style:** Structured JSON-like responses
 - **Evaluation loss:** `0.3492`
+
+---
 
 ## Intended Use
 
@@ -58,6 +62,8 @@ Example use cases:
 - Translating or reformulating Arabic news content into structured multilingual outputs
 - Demonstrating LoRA fine-tuning with LLaMA-Factory and Qwen2.5
 
+---
+
 ## Not Intended For
 
 This model should not be used as-is for high-stakes applications such as:
@@ -69,6 +75,8 @@ This model should not be used as-is for high-stakes applications such as:
 - Production systems without human review
 
 The model may generate incorrect, incomplete, or hallucinated information.
+
+---
 
 ## Training and Evaluation Data
 
@@ -82,3 +90,319 @@ The dataset follows an instruction-tuning format with fields similar to:
   "input": "Arabic news article text...",
   "output": "{...structured response...}"
 }
+```
+
+The full training dataset is not included in this repository because of size and licensing considerations.
+
+A small sample dataset may be provided in:
+
+```text
+data/sample/
+```
+
+---
+
+## Training Procedure
+
+The model was trained using LLaMA-Factory with PEFT LoRA fine-tuning.
+
+### Training Hyperparameters
+
+| Hyperparameter | Value |
+|---|---:|
+| Learning rate | `0.0001` |
+| Train batch size | `1` |
+| Eval batch size | `1` |
+| Gradient accumulation steps | `4` |
+| Total train batch size | `4` |
+| Optimizer | `AdamW` |
+| Adam beta1 | `0.9` |
+| Adam beta2 | `0.999` |
+| Adam epsilon | `1e-08` |
+| LR scheduler | `cosine` |
+| Warmup ratio | `0.1` |
+| Epochs | `3.0` |
+| Seed | `42` |
+
+---
+
+## Training Results
+
+The model achieved the following final evaluation result:
+
+```text
+Validation Loss: 0.3492
+```
+
+Best logged validation loss:
+
+```text
+0.3214 at step 1300
+```
+
+### Training Log
+
+| Training Loss | Epoch  | Step | Validation Loss |
+|:-------------:|:------:|:----:|:---------------:|
+| 0.4779 | 0.1481 | 100  | 0.4030 |
+| 0.3938 | 0.2963 | 200  | 0.3865 |
+| 0.5203 | 0.4444 | 300  | 0.3678 |
+| 0.4821 | 0.5926 | 400  | 0.3523 |
+| 0.3828 | 0.7407 | 500  | 0.3403 |
+| 0.4154 | 0.8889 | 600  | 0.3397 |
+| 0.2703 | 1.0370 | 700  | 0.3361 |
+| 0.2253 | 1.1852 | 800  | 0.3383 |
+| 0.2677 | 1.3333 | 900  | 0.3323 |
+| 0.2723 | 1.4815 | 1000 | 0.3259 |
+| 0.3145 | 1.6296 | 1100 | 0.3277 |
+| 0.2413 | 1.7778 | 1200 | 0.3238 |
+| 0.2920 | 1.9259 | 1300 | 0.3214 |
+| 0.1336 | 2.0741 | 1400 | 0.3490 |
+| 0.1882 | 2.2222 | 1500 | 0.3506 |
+| 0.1967 | 2.3704 | 1600 | 0.3506 |
+| 0.2248 | 2.5185 | 1700 | 0.3511 |
+| 0.1419 | 2.6667 | 1800 | 0.3490 |
+| 0.1606 | 2.8148 | 1900 | 0.3498 |
+| 0.1919 | 2.9630 | 2000 | 0.3491 |
+
+---
+
+## Inference Example
+
+### Input
+
+```text
+أعلنت وزارة الصحة عن إطلاق حملة وطنية جديدة للتطعيم في مختلف المحافظات، بهدف زيادة معدلات الوقاية وتحسين الخدمات الصحية للمواطنين.
+```
+
+### Expected Output
+
+```json
+{
+  "title": "إطلاق حملة وطنية جديدة للتطعيم",
+  "summary": "أعلنت وزارة الصحة عن حملة وطنية للتطعيم تهدف إلى زيادة معدلات الوقاية وتحسين الخدمات الصحية.",
+  "category": "health",
+  "language": "ar",
+  "organizations": [
+    "وزارة الصحة"
+  ],
+  "locations": [],
+  "people": [],
+  "topics": [
+    "الصحة",
+    "التطعيم",
+    "الخدمات الصحية"
+  ],
+  "sentiment": "neutral"
+}
+```
+
+---
+
+## How to Use
+
+Install the required libraries:
+
+```bash
+pip install torch transformers peft accelerate
+```
+
+Load the base model and LoRA adapter:
+
+```python
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import PeftModel
+
+base_model_id = "Qwen/Qwen2.5-1.5B-Instruct"
+adapter_id = "YOUR_USERNAME/YOUR_MODEL_REPO"
+
+tokenizer = AutoTokenizer.from_pretrained(base_model_id)
+
+base_model = AutoModelForCausalLM.from_pretrained(
+    base_model_id,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+
+model = PeftModel.from_pretrained(base_model, adapter_id)
+model.eval()
+```
+
+Run inference:
+
+```python
+article = """
+أعلنت وزارة الصحة عن إطلاق حملة وطنية جديدة للتطعيم في مختلف المحافظات، بهدف زيادة معدلات الوقاية وتحسين الخدمات الصحية للمواطنين.
+"""
+
+messages = [
+    {
+        "role": "system",
+        "content": "You are an assistant specialized in structured Arabic news analysis."
+    },
+    {
+        "role": "user",
+        "content": f"Extract structured information from this Arabic news article:\n\n{article}"
+    }
+]
+
+text = tokenizer.apply_chat_template(
+    messages,
+    tokenize=False,
+    add_generation_prompt=True
+)
+
+inputs = tokenizer(text, return_tensors="pt").to(model.device)
+
+with torch.no_grad():
+    output_ids = model.generate(
+        **inputs,
+        max_new_tokens=1024,
+        do_sample=False,
+        pad_token_id=tokenizer.eos_token_id
+    )
+
+response = tokenizer.decode(
+    output_ids[0][inputs["input_ids"].shape[-1]:],
+    skip_special_tokens=True
+)
+
+print(response)
+```
+
+Replace this line:
+
+```python
+adapter_id = "YOUR_USERNAME/YOUR_MODEL_REPO"
+```
+
+with your real Hugging Face model repository name.
+
+Example:
+
+```python
+adapter_id = "hassan-s272/arabic-news-qwen-lora"
+```
+
+---
+
+## Output Files
+
+After training, the project produces files such as:
+
+```text
+adapter_model.safetensors      # LoRA adapter weights
+adapter_config.json            # LoRA adapter configuration
+train_results.json             # Training metrics
+eval_results.json              # Evaluation metrics
+trainer_state.json             # Trainer state and logs
+trainer_log.jsonl              # Detailed trainer logs
+training_loss.png              # Training loss chart
+training_eval_loss.png         # Evaluation loss chart
+```
+
+Large model files and checkpoint folders should not be stored directly in GitHub. Use Hugging Face Hub, Git LFS, or Google Drive for model weights.
+
+---
+
+## Repository Structure
+
+Recommended project structure:
+
+```text
+arabic-news-llm-finetuning/
+│
+├── README.md
+├── requirements.txt
+├── .gitignore
+│
+├── notebooks/
+│   └── llm_finetuning.ipynb
+│
+├── configs/
+│   └── news_finetune.yaml
+│
+├── data/
+│   └── sample/
+│       └── news-sample-small.jsonl
+│
+├── examples/
+│   ├── sample_input_ar.txt
+│   └── sample_output.json
+│
+├── results/
+│   ├── train_results.json
+│   ├── eval_results.json
+│   ├── all_results.json
+│   ├── training_loss.png
+│   └── training_eval_loss.png
+│
+└── serving/
+    ├── vllm_serve.sh
+    └── locust.py
+```
+
+---
+
+## Limitations
+
+- The model may hallucinate people, places, dates, topics, or summaries.
+- The model may sometimes produce invalid JSON.
+- The model was evaluated mainly using validation loss, not a full benchmark.
+- The training dataset is private/internal and may not cover all Arabic news domains.
+- The model may inherit limitations and biases from the base model and the training data.
+- Human review is recommended before using outputs in real applications.
+
+---
+
+## Recommended Post-processing
+
+Because the model is expected to generate structured JSON-like outputs, validate the response before using it.
+
+Example:
+
+```python
+import json
+
+try:
+    parsed = json.loads(response)
+except json.JSONDecodeError:
+    parsed = None
+
+if parsed is None:
+    print("Invalid JSON output")
+else:
+    print(parsed)
+```
+
+For production use, schema validation with Pydantic or another validation library is recommended.
+
+---
+
+## Framework Versions
+
+- PEFT `0.12.0`
+- Transformers `4.48.2`
+- PyTorch `2.5.1+cu124`
+- Datasets `3.2.0`
+- Tokenizers `0.21.0`
+
+---
+
+## License
+
+The current license is marked as `other`.
+
+Before publishing publicly, make sure the dataset and LoRA adapter weights are allowed to be shared.
+
+---
+
+## Acknowledgements
+
+This project uses:
+
+- [`Qwen/Qwen2.5-1.5B-Instruct`](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct)
+- PEFT / LoRA
+- LLaMA-Factory
+- Hugging Face Transformers
